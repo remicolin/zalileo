@@ -1,0 +1,30 @@
+[package]
+name = "proof_of_location_guest"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+
+[dependencies]
+risc0-zkvm = { version = "1.0.5", default-features = false, features = ['std'] }
+hex-literal = "0.4"
+p256 = { version = "=0.13.2", features = ["arithmetic", "serde", "expose-field", "std", "ecdsa"], default_features = false }
+p521 = { version = "=0.13.3", features = ["arithmetic", "serde", "std", "ecdsa"], default_features = false }
+galileo-osnma = { version = "0.8.0", features = ["galmon"] }
+spki = { version = "0.7", features = ["pem"] }
+hex = "0.4"
+log = "0.4"
+anyhow = "1"
+clap = { version = "4.4", features = ["derive"] }
+ecdsa = { version = "0.16", features = ["pkcs8"] }
+env_logger = "0.11"
+bitvec = "1"
+chrono = "0.4"
+nmea-parser = "0.11.0"
+
+[patch.crates-io]
+# Placing these patch statement in the workspace Cargo.toml will add RISC Zero SHA-256 and bigint
+# multiplication accelerator support for all downstream usages of the following crates.
+sha2 = { git = "https://github.com/risc0/RustCrypto-hashes", tag = "sha2-v0.10.6-risczero.0" }
+k256 = { git = "https://github.com/risc0/RustCrypto-elliptic-curves", tag = "k256/v0.13.1-risczero.1"  }
+crypto-bigint = { git = "https://github.com/risc0/RustCrypto-crypto-bigint", tag = "v0.5.2-risczero.0" }

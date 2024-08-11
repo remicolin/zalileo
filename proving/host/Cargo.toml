@@ -1,0 +1,21 @@
+[package]
+name = "host"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+methods = { path = "../methods" }
+risc0-zkvm = { version = "1.0.5", features = ["metal", "prove"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+serde = "1.0"
+p256 = { version = "0.13.2", features = ["serde"] }
+p521 = { version = "0.13.3", features = ["serde"] }
+rand_core = "0.6.4"
+galileo-osnma = { version = "0.8.0", features = ["galmon"] }
+hex-literal = "0.4"
+anyhow = "1"
+bitvec = "1"
+clap = { version = "4.4", features = ["derive"] }
+chrono = "0.4"
+hex = "0.4"
+nmea-parser = "0.11.0"
