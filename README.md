@@ -20,3 +20,9 @@ In the proving phase, Zalileo uses a Zero-Knowledge Proof program written in Rus
 
 ### Validation
 During validation, the proof generated in the proving phase is used to verify the authenticity of the location data. This process ensures that the location is genuine while maintaining the confidentiality of the exact coordinates.
+
+Supported Validators :
+
+
+## Next Steps
+...
