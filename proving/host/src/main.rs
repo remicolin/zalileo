@@ -227,11 +227,11 @@ fn main() {
         page_num += 1;
     }*/
 
-    let path = PathBuf::from(format!("{}/../gnss_log_2024_08_11_15_26_14.nmea", env!("CARGO_MANIFEST_DIR")));
+    let path = PathBuf::from(format!("{}/../gnss_log_2024_08_11_17_45_04.nmea", env!("CARGO_MANIFEST_DIR")));
     let file = fs::read_to_string(&path).unwrap();
 
     let pubkey = String::from("1143c50c457002ac5273549e633e59172d13a4f7d8747fb958c4ff4f4e668ad36706a43bbb8ff73b67eb0ff6d478d58aa018ae9c9d199b3e991cf6333ad51bf6");
-    let hex_sig = "7973f147720c39018f25ef5f2431f31faddd474bbdce266a31ea278f8335434dcbaa10496a4f72e8c16e8a467c6b9dc406530fc8330c3f72b44add56957a5bf8";
+    let hex_sig = "5c44b8c0e9476a6f54122c1523b8d1c0d0fa53f30187a7e18b865360417a93be4a15493ab483866886dfd9b0325c2c9fe9b92c26f831a0bff59062ae8fd7b154";
     let sig_bytes = hex::decode(hex_sig).unwrap();
     let signature: Signature = Signature::from_bytes(sig_bytes.as_slice().into()).unwrap();
 
@@ -254,8 +254,6 @@ fn main() {
 
     // Verify the receipt and then access the journal.
     receipt.verify(PROOF_OF_LOCATION_GUEST_ID).unwrap();
-    let len: u32 =
-        receipt.journal.decode().unwrap();
 
     /*let serialized = bincode::serialize(&receipt).unwrap();
     std::fs::write("proof", serialized).expect("Failed to write proof file");

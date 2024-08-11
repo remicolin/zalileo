@@ -68,14 +68,14 @@ fn main() {
             },
             ParsedMessage::Gga(gga) => {
                 println!("Source:    {}",     gga.source);
-                println!("Latitude:  {:.3}°", gga.latitude.unwrap());
-                println!("Longitude: {:.3}°", gga.longitude.unwrap());
+                println!("Latitude:  {:.3}°", gga.latitude.unwrap_or(0.0));
+                println!("Longitude: {:.3}°", gga.longitude.unwrap_or(0.0));
                 println!("");
             },
             ParsedMessage::Rmc(rmc) => {
                 println!("Source:  {}",        rmc.source);
-                println!("Speed:   {:.1} kts", rmc.sog_knots.unwrap());
-                println!("Bearing: {}°",       rmc.bearing.unwrap());
+                println!("Speed:   {:.1} kts", rmc.sog_knots.unwrap_or(0.0));
+                println!("Bearing: {}°",       rmc.bearing.unwrap_or(0.0));
                 println!("Time:    {}",        rmc.timestamp.unwrap());
                 println!("");
             },
