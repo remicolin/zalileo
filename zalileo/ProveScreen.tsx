@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { YStack, Text, XStack, Slider, Spinner } from 'tamagui';
 import { bgGreen, textBlack } from './colors';
 import CustomButton from './components/CustomButton';
@@ -8,10 +8,11 @@ import { Cpu } from '@tamagui/lucide-icons';
 
 interface ProveScreenProps {
     setSelectedTab: (tab: string) => void;
+    setIsInRange: (isInRange: boolean) => void;
 }
 
 
-const ProveScreen: React.FC<ProveScreenProps> = ({ setSelectedTab }) => {
+const ProveScreen: React.FC<ProveScreenProps> = ({ setSelectedTab, setIsInRange }) => {
     const initialRegion = {
         latitude: 37.78825,
         longitude: -122.4324,
@@ -23,11 +24,38 @@ const ProveScreen: React.FC<ProveScreenProps> = ({ setSelectedTab }) => {
     const [sliderValue, setSliderValue] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
 
+    useEffect(() => {
+        if (userMarker) {
+            const distance = calculateDistance(
+                initialRegion.latitude,
+                initialRegion.longitude,
+                userMarker.latitude,
+                userMarker.longitude
+            );
+            setIsInRange(distance <= sliderValue);
+        }
+    }, [userMarker, sliderValue]);
+
+    const calculateDistance = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+        const R = 6371e3; // Earth's radius in meters
+        const φ1 = lat1 * Math.PI / 180;
+        const φ2 = lat2 * Math.PI / 180;
+        const Δφ = (lat2 - lat1) * Math.PI / 180;
+        const Δλ = (lon2 - lon1) * Math.PI / 180;
+
+        const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+            Math.cos(φ1) * Math.cos(φ2) *
+            Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+        return R * c; // Distance in meters
+    };
+
     const handleProve = () => {
         setIsLoading(true);
         // Sleep for 5 seconds then set isLoading to false
         const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
-        sleep(5000).then(() => {
+        sleep(3500).then(() => {
             setIsLoading(false);
             setSelectedTab("verify");
 
@@ -85,12 +113,15 @@ const ProveScreen: React.FC<ProveScreenProps> = ({ setSelectedTab }) => {
                     <Slider.Thumb circular size="$2" index={0} />
                 </Slider>
                 <Text fontSize="$6">Radius: {sliderValue} meters</Text>
+
             </YStack>
+            <XStack f={1} />
+
 
             <XStack f={1} />
-            {isLoading && <Spinner size="large" />}
-            <XStack />
-            <CustomButton Icon={<Cpu />} text="Generate Proof" onPress={handleProve} />
+
+            <XStack f={1} />
+            <CustomButton isDisabled={isLoading} Icon={isLoading ? <Spinner size="small" /> : <Cpu />} text="Generate Proof" onPress={handleProve} />
         </YStack >
     );
 };

@@ -22,23 +22,28 @@ import ProveScreen from './ProveScreen';
 import { Tabs, YStack } from 'tamagui';
 import { bgWhite } from './colors';
 import VerifyScreen from './VerifyScreen';
+import StartScreen from './StartScreen';
 
 function App(): React.JSX.Element {
 
-  const [selectedTab, seSelectedtab] = useState("prove")
+  const [selectedTab, seSelectedtab] = useState("start")
+  const [isInRange, setIsInRange] = useState(false);
 
   return (
     <YStack flex={1} bg={bgWhite} p="$4" pb="$6">
-      <Tabs f={1} orientation="horizontal" flexDirection="column" defaultValue={"prove"}
+      <Tabs f={1} orientation="horizontal" flexDirection="column" defaultValue={"start"}
         value={selectedTab}
         onValueChange={(value) => seSelectedtab(value)}
       >
         <Tabs.Content value="prove" f={1}>
-          <ProveScreen setSelectedTab={seSelectedtab} />
+          <ProveScreen setSelectedTab={seSelectedtab} setIsInRange={setIsInRange} />
         </Tabs.Content>
 
         <Tabs.Content value="verify" f={1}>
-          <VerifyScreen setSelectedTab={seSelectedtab} />
+          <VerifyScreen setSelectedTab={seSelectedtab} isInRange={isInRange} />
+        </Tabs.Content>
+        <Tabs.Content value="start" f={1}>
+          <StartScreen setSelectedTab={seSelectedtab} />
         </Tabs.Content>
 
 
