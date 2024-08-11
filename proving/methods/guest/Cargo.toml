@@ -21,6 +21,7 @@ env_logger = "0.11"
 bitvec = "1"
 chrono = "0.4"
 nmea-parser = "0.11.0"
+sha2 = "0.10"
 
 [patch.crates-io]
 # Placing these patch statement in the workspace Cargo.toml will add RISC Zero SHA-256 and bigint

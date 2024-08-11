@@ -19,3 +19,5 @@ clap = { version = "4.4", features = ["derive"] }
 chrono = "0.4"
 hex = "0.4"
 nmea-parser = "0.11.0"
+sha2 = "0.10"
+bincode = "1.3"

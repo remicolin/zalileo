@@ -17,6 +17,7 @@ use std::io::Read;
 use chrono::NaiveDateTime;
 use std::{fs, path::PathBuf};
 use nmea_parser::*;
+use sha2::{Sha256, Digest};
 
 fn load_pubkey(hex: &str, pkid: u8) -> Result<PublicKey<Validated>> {
     let pubkey = hex::decode(hex)?;
@@ -26,21 +27,31 @@ fn load_pubkey(hex: &str, pkid: u8) -> Result<PublicKey<Validated>> {
 
 fn main() {
     env_logger::init();
-    let (pubkey, file/*, signature*/): (String, String/*, Signature*/) = env::read();
+    let (pubkey, file, signature): (String, String, Signature) = env::read();
+    
+    println!("Signature: {:?}", signature);
 
-    //println!("Signature: {:?}", signature);
+    let verifying_key = p256::ecdsa::VerifyingKey::from_sec1_bytes(&hex::decode(&pubkey).unwrap()).unwrap();
+    println!("Verifying key: {:?}", verifying_key);
 
-    /*let verifying_key = p256::ecdsa::VerifyingKey::from_sec1_bytes(&pubkey).unwrap();
+    let mut hasher = Sha256::new();
+    hasher.update(&file.as_bytes());
+    let message = hasher.finalize();
+
+    println!("Guest Message: {:?}", message);
 
     // Verify the signature, panicking if verification fails.
     verifying_key
-        .verify(&file.as_bytes(), &signature)
-        .expect("ECDSA signature verification failed");*/
+        .verify(&message, &signature)
+        .expect("ECDSA signature verification failed");
 
     let mut parser = NmeaParser::new();
     let sentences = file.split("\n");
     // Parse the sentences and print some fields of the messages
-    for sentence in sentences {    
+    for sentence in sentences {   
+        if sentence.starts_with("#") {
+            continue;
+        } 
         match parser.parse_sentence(sentence).unwrap_or(ParsedMessage::Incomplete) {
             ParsedMessage::VesselDynamicData(vdd) => {
                 println!("MMSI:    {}",        vdd.mmsi);
@@ -228,6 +239,5 @@ fn main() {
         }
     }*/
 
-    // Commit to the journal the verifying key and message that was signed.
-    env::commit(&pubkey);
+    env::commit(&(pubkey, file));
 }

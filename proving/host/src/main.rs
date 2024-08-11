@@ -28,6 +28,7 @@ use galileo_osnma::{
 use tracing_subscriber::fmt::format;
 use std::{fs, path::PathBuf};
 use nmea_parser::*;
+use sha2::{Sha256, Digest};
 
 fn filename_to_gst(filename: &str) -> Result<Gst> {
     let dt = NaiveDateTime::parse_from_str(filename, "%d_%b_%Y_GST_%H_%M_%S.csv")?;
@@ -172,28 +173,12 @@ pub const GALMON_PACKETS: [u8; 832] = hex!(
     7a 14 ae 47 21 30 40 29 00 00 00 00 00 00 00 00"
 );
 
-
-/// Given an secp256r1 verifier key (i.e. public key), message and signature,
-/// runs the ECDSA verifier inside the zkVM and returns a receipt, including a
-/// journal and seal attesting to the fact that the prover knows a valid
-/// signature from the committed public key over the committed message.
-fn prove_ecdsa_verification(
-    verifying_key: &VerifyingKey,
-    message: &[u8],
-    signature: &Signature,
-) -> Receipt {
-    let input = (verifying_key.to_encoded_point(true), message, signature);
-    let env = ExecutorEnv::builder()
-        .write(&input)
-        .unwrap()
-        .build()
-        .unwrap();
-
-    // Obtain the default prover.
-    let prover = default_prover();
-
-    // Produce a receipt by proving the specified ELF binary.
-    prover.prove(env, PROOF_OF_LOCATION_GUEST_ELF).unwrap().receipt
+pub fn convert(data: &[u32; 8]) -> [u8; 32] {
+    let mut res = [0; 32];
+    for i in 0..8 {
+        res[4 * i..4 * (i + 1)].copy_from_slice(&data[i].to_le_bytes());
+    }
+    res
 }
 
 fn main() {
@@ -242,14 +227,18 @@ fn main() {
         page_num += 1;
     }*/
 
-    let path = PathBuf::from(format!("{}/../gnss_log_2024_08_11_06_23_59.nmea", env!("CARGO_MANIFEST_DIR")));
+    let path = PathBuf::from(format!("{}/../gnss_log_2024_08_11_15_26_14.nmea", env!("CARGO_MANIFEST_DIR")));
     let file = fs::read_to_string(&path).unwrap();
 
-    let pubkey = String::from("0454846e2f379fcf0c2d7cacccafb9e3142dc916d5791e144bd0c6f25c147674a8183b5125b1736c8e9b1d570685f2d44769fa4c9862b80fa761a97b8afad28bed");
+    let pubkey = String::from("1143c50c457002ac5273549e633e59172d13a4f7d8747fb958c4ff4f4e668ad36706a43bbb8ff73b67eb0ff6d478d58aa018ae9c9d199b3e991cf6333ad51bf6");
+    let hex_sig = "7973f147720c39018f25ef5f2431f31faddd474bbdce266a31ea278f8335434dcbaa10496a4f72e8c16e8a467c6b9dc406530fc8330c3f72b44add56957a5bf8";
+    let sig_bytes = hex::decode(hex_sig).unwrap();
+    let signature: Signature = Signature::from_bytes(sig_bytes.as_slice().into()).unwrap();
 
-    let signature: Signature;
+    println!("Signature: {:?}", signature);
+    println!("Hex Signature: {:?}", signature.to_string());
 
-    let input = (pubkey, file);    
+    let input = (pubkey, file, signature);    
 
     let env = ExecutorEnv::builder()
         .write(&input)
@@ -268,9 +257,16 @@ fn main() {
     let len: u32 =
         receipt.journal.decode().unwrap();
 
-    let proof = &receipt.inner.succinct().unwrap().seal;
-    let proof_bytes = proof.iter().flat_map(|x| x.to_le_bytes().to_vec()).collect::<Vec<u8>>();
-    fs::write("proof", proof_bytes).unwrap();
+    /*let serialized = bincode::serialize(&receipt).unwrap();
+    std::fs::write("proof", serialized).expect("Failed to write proof file");
 
-    println!("Length of the input: {}", len);
+    std::fs::write("file_id", convert(&PROOF_OF_LOCATION_GUEST_ID))
+        .expect("Failed to write id file");
+
+    std::fs::write("public_inputs", receipt.journal.bytes)
+        .expect("Failed to write pub_input file");*/
+
+    /*let proof = &receipt.inner.succinct().unwrap().seal;
+    let proof_bytes = proof.iter().flat_map(|x| x.to_le_bytes().to_vec()).collect::<Vec<u8>>();
+    fs::write("proof", proof_bytes).unwrap();*/
 }
