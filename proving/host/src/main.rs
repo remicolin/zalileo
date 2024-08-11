@@ -230,7 +230,7 @@ fn main() {
     let path = PathBuf::from(format!("{}/../gnss_log_2024_08_11_17_45_04.nmea", env!("CARGO_MANIFEST_DIR")));
     let file = fs::read_to_string(&path).unwrap();
 
-    let pubkey = String::from("1143c50c457002ac5273549e633e59172d13a4f7d8747fb958c4ff4f4e668ad36706a43bbb8ff73b67eb0ff6d478d58aa018ae9c9d199b3e991cf6333ad51bf6");
+    let pubkey = String::from("04b040f7db085cc873c67cb0d51baabf4dca25f394f1acdd05185b0773615f28b4739dd0c7373e754857403c56dd08965a604c5299f0201eedc70c6dbab537b263");
     let hex_sig = "5c44b8c0e9476a6f54122c1523b8d1c0d0fa53f30187a7e18b865360417a93be4a15493ab483866886dfd9b0325c2c9fe9b92c26f831a0bff59062ae8fd7b154";
     let sig_bytes = hex::decode(hex_sig).unwrap();
     let signature: Signature = Signature::from_bytes(sig_bytes.as_slice().into()).unwrap();
