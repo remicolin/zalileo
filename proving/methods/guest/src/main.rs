@@ -34,15 +34,15 @@ fn main() {
     let verifying_key = p256::ecdsa::VerifyingKey::from_sec1_bytes(&hex::decode(&pubkey).unwrap()).unwrap();
     println!("Verifying key: {:?}", verifying_key);
 
-    let mut hasher = Sha256::new();
+    /*let mut hasher = Sha256::new();
     hasher.update(&file.as_bytes());
-    let message = hasher.finalize();
+    let message = hasher.finalize();*/
 
-    println!("Guest Message: {:?}", message);
+    //println!("Guest Message: {:?}", message);
 
     // Verify the signature, panicking if verification fails.
     verifying_key
-        .verify(&message, &signature)
+        .verify(&file.as_bytes(), &signature)
         .expect("ECDSA signature verification failed");
 
     let mut parser = NmeaParser::new();
