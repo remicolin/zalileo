@@ -7,13 +7,22 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "android-devices": "adb devices",
+    "ios-device": "npx react-native run-ios --udid $DEVICE_ID",
+    "ios-device-release": "npx react-native run-ios --configuration Release --udid $DEVICE_ID",
+    "ios-list-devices": "xcrun xctrace list devices"
   },
   "dependencies": {
+    "@tamagui/config": "^1.108.2",
+    "@tamagui/core": "^1.108.2",
     "@tamagui/lucide-icons": "^1.108.2",
     "@tamagui/types": "^1.108.2",
     "react": "18.2.0",
     "react-native": "0.74.5",
+    "react-native-maps": "^1.17.3",
+    "react-native-svg": "^15.5.0",
+    "react-spinners": "^0.14.1",
     "tamagui": "^1.108.2"
   },
   "devDependencies": {

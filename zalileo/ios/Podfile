@@ -23,6 +23,9 @@ target 'zalileo' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'react-native-maps', :path => '../node_modules/react-native-maps'
+  pod 'RNSVG', :path => '../node_modules/react-native-svg' # Added this line
+
   target 'zalileoTests' do
     inherit! :complete
     # Pods for testing
